@@ -18,15 +18,15 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          region: ${{ secrets.us-east-1  }}
+          region: ${{ secrets.AWS_REGION }}
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.nginix-web-app }}:latest .
+          docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest .
       
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ secrets.nginix-web-app }}:latest
+          docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -36,11 +36,11 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          region: ${{ secrets.us-east-1  }}
+          region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to ECS
         run: |
-          aws ecs update-service --cluster vecluster --service ve3service --force-new-deployment --region ${{ secrets.ap-south-1 }}
+          aws ecs update-service --cluster vecluster --service ve3service --force-new-deployment --region ${{ secrets.AWS_REGION }}
 
   test:
     runs-on: ubuntu-latest
@@ -54,4 +54,4 @@ jobs:
       - name: Rollback on failure
         if: failure()
         run: |
-          aws ecs update-service --cluster vecluster --service ve3service --force-new-deployment --region ${{ secrets.ap-south-1 }} --rollback
+          aws ecs update-service --cluster vecluster --service ve3service --force-new-deployment --region ${{ secrets.AWS_REGION }} --rollback
