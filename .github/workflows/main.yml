@@ -35,7 +35,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build  # Building jobs
+    needs: build  # Ensure this job runs after the build job
 
     steps:
       - name: Code Checkout
@@ -51,19 +51,19 @@ jobs:
       - name: Task Definition for ECS
         run: |
           aws ecs register-task-definition \
-            --cli-input-json file://task-definition.json  # Registering the ECS task definition
+            --cli-input-json file://task-definition.json  # Register the ECS task definition using the JSON file
 
       - name: Deploying to ECS
         run: |
           aws ecs update-service \
-            --cluster vecluster \  # Name of your ECS cluster
-            --service ve3service \  # Name of your ECS service
-            --force-new-deployment \  # Force a new deployment
-            --region ap-south-1  # AWS region for ECS
+            --cluster vecluster \
+            --service ve3service \
+            --force-new-deployment \
+            --region ap-south-1
 
   test:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: deploy  # Ensure this job runs after the deploy job
 
     steps:
       - name: Run integration tests
