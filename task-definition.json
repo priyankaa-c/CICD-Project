@@ -5,6 +5,7 @@
       "name": "ve3-task-container",
       "image": "${ECR_REPOSITORY_URI}:latest",
       "essential": true,
+      
       "memory": 512,
       "cpu": 256,
       "portMappings": [
