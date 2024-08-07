@@ -56,8 +56,8 @@ jobs:
       - name: Deploying to ECS
         run: |
           aws ecs update-service \
-            --cluster my-cluster \  # Name of your ECS cluster
-            --service my-service \  # Name of your ECS service
+            --cluster vecluster \  # Name of your ECS cluster
+            --service ve3service \  # Name of your ECS service
             --force-new-deployment \  # Force a new deployment
             --region ap-south-1  # AWS region for ECS
 
