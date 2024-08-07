@@ -17,6 +17,8 @@ jobs:
       - name: Log in to Amazon ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          region: ${{ secrets.us-east-1  }}
 
       - name: Build Docker image
         run: |
@@ -33,6 +35,8 @@ jobs:
     steps:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          region: ${{ secrets.us-east-1  }}
 
       - name: Deploy to ECS
         run: |
