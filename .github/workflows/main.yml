@@ -14,11 +14,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Log in to Amazon ECR
-        id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v1
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          region: ${{ secrets.AWS_REGION_ECR }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_ECS }}
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION_ECR }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
 
       - name: Build Docker image
         run: |
@@ -33,14 +38,25 @@ jobs:
     needs: build
 
     steps:
-      - name: Log in to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          region: ${{ secrets.AWS_REGION_ECR }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_ECS }}
+
+      - name: Register Task Definition
+        run: |
+          aws ecs register-task-definition \
+            --cli-input-json file://task-definition.json
 
       - name: Deploy to ECS
         run: |
-          aws ecs update-service --cluster vecluster --service ve3service --force-new-deployment --region ${{ secrets.AWS_REGION_ECS }}
+          aws ecs update-service \
+            --cluster my-cluster \
+            --service my-service \
+            --force-new-deployment \
+            --region ${{ secrets.AWS_REGION_ECS }}
 
   test:
     runs-on: ubuntu-latest
@@ -54,4 +70,9 @@ jobs:
       - name: Rollback on failure
         if: failure()
         run: |
-          aws ecs update-service --cluster vecluster --service ve3service --force-new-deployment --region ${{ secrets.AWS_REGION_ECS }} --rollback
+          aws ecs update-service \
+            --cluster my-cluster \
+            --service my-service \
+            --force-new-deployment \
+            --region ${{ secrets.AWS_REGION_ECS }} \
+            --rollback
