@@ -27,7 +27,7 @@ jobs:
 
       - name: Building Docker image
         run: |
-          docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest -f Dockerfile.alpine .
+          docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest .
 
       - name: Pushing Docker image to AWS ECR
         run: |
