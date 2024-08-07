@@ -4,21 +4,21 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Trigger the pipeline on push to the main branch
+      - main 
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # The GitHub Actions runner OS, not the Docker image
+    runs-on: ubuntu-latest
 
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v2  # Check out the code from the repository
+        uses: actions/checkout@v2 
 
       - name: Set up AWS credentials for ECR
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS Access Key ID from secrets
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS Secret Access Key from secrets
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS Access Key ID
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS Secret Access Key
           aws-region: us-east-1  # AWS region for ECR
 
       - name: Authentication - Login to AWS ECR
@@ -35,26 +35,23 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build  # This job depends on the successful completion of the 'build' job
+    needs: build  # Building jobs
 
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v2  # Ensure code is checked out in this job too
-
-      - name: List Files
-        run: ls -la  # List files to verify the presence of task-definition.json
+        uses: actions/checkout@v2
 
       - name: Authentication - Setting up AWS credentials for ECS
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS Access Key ID from secrets
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS Secret Access Key from secrets
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS Access Key ID
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS Secret Access Key
           aws-region: ap-south-1  # AWS region for ECS
 
       - name: Task Definition for ECS
         run: |
           aws ecs register-task-definition \
-            --cli-input-json file://task-definition.json  # Register the ECS task definition using the JSON file
+            --cli-input-json file://task-definition.json  # Registering the ECS task definition
 
       - name: Deploying to ECS
         run: |
@@ -66,19 +63,19 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: deploy  # This job depends on the successful completion of the 'deploy' job
+    needs: deploy
 
     steps:
       - name: Run integration tests
         run: |
-          curl -f http://13.202.100.76 || exit 1  # Run integration tests by sending a request to your app
+          curl -f http://13.202.100.76 || exit 1  # Running integration test by sending a request to your app
 
       - name: Rollback on failure
-        if: failure()  # Only run this step if the previous steps failed
+        if: failure()
         run: |
           aws ecs update-service \
-            --cluster my-cluster \  # Name of your ECS cluster
-            --service my-service \  # Name of your ECS service
-            --force-new-deployment \  # Force a new deployment
-            --region ap-south-1 \  # AWS region for ECS
+            --cluster vecluster \
+            --service ve3service \
+            --force-new-deployment \
+            --region ap-south-1 \
             --rollback  # Rollback to the previous task definition
