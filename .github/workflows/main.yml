@@ -14,21 +14,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up AWS credentials
+      - name: Set up AWS credentials for ECR
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION_ECS }}
+          aws-region: ap-south-1 # ECR region
 
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION_ECR }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
 
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest .
-      
+
       - name: Push Docker image to ECR
         run: |
           docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
@@ -38,12 +38,12 @@ jobs:
     needs: build
 
     steps:
-      - name: Set up AWS credentials
+      - name: Set up AWS credentials for ECS
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION_ECS }}
+          aws-region: ap-south-1  # ECS region
 
       - name: Register Task Definition
         run: |
@@ -56,7 +56,7 @@ jobs:
             --cluster my-cluster \
             --service my-service \
             --force-new-deployment \
-            --region ${{ secrets.AWS_REGION_ECS }}
+            --region ap-south-1
 
   test:
     runs-on: ubuntu-latest
@@ -74,5 +74,5 @@ jobs:
             --cluster my-cluster \
             --service my-service \
             --force-new-deployment \
-            --region ${{ secrets.AWS_REGION_ECS }} \
+            --region ap-south-1 \
             --rollback
