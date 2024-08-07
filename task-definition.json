@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "ve3-task-container",
-      "image": "${secrets.ECR_REPOSITORY_URI}:latest",
+      "image": "public.ecr.aws/i5u9n7k9/nginix-web-app:latest",
       "essential": true,
       
       "memory": 512,
