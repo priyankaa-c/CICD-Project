@@ -34,12 +34,12 @@ jobs:
       # Step 5: Build Docker image
       - name: Build Docker image
         run: |
-          docker build --tag ${{ secrets.ECR_PUBLIC_REPOSITORY }}:latest .
+          docker build --tag ${{ secrets.ECR_REPOSITORY_URI }}:latest .
 
       # Step 6: Push Docker image to Amazon ECR Public
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.ECR_PUBLIC_REPOSITORY }}:latest
+          docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
 
       # Step 7: Deploy to ECS
       - name: Deploy to ECS
