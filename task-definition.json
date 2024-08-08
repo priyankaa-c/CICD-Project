@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "project-container",
-      "image": "public.ecr.aws/i5u9n7k9/nginix-web-app:latest",
+      "image": "public.ecr.aws/i5u9n7k9/nginx-web-app:latest",
       "memory": 512,
       "cpu": 256,
       "essential": true,
@@ -29,5 +29,6 @@
   "networkMode": "awsvpc",
   "memory": "512",
   "cpu": "256",
-  "executionRoleArn": "arn:aws:ecs:ap-south-1:211125726100:task-definition/ve3task:2"
+  "executionRoleArn": "arn:aws:iam::211125726100:role/AWSecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole"
 }
