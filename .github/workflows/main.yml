@@ -53,7 +53,7 @@ jobs:
       # Step 8: Run integration tests
       - name: Run integration tests
         run: |
-          curl -f http://13.201.229.2/api/test || exit 1
+          curl -f http://3.110.44.45/api/test || exit 1
 
       # Step 9: Rollback on failure
       - name: Rollback deployment
