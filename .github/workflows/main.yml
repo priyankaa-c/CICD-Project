@@ -34,7 +34,7 @@ jobs:
       # Step 5: Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t {{ secrets.ECR_PUBLIC_REPOSITORY }}:latest .
+          docker buildx build --build-arg TARGETPLATFORM=linux/amd64 --tag {{ secrets.ECR_PUBLIC_REPOSITORY }}:latest .
 
       # Step 6: Push Docker image to Amazon ECR Public
       - name: Push Docker image
