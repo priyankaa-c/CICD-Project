@@ -14,9 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      # Step 2: Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2  # Optional, not used in this case but can be retained if needed
 
       # Step 3: Configure AWS Credentials
       - name: Configure AWS Credentials
@@ -24,7 +24,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Replace with your AWS region
+          aws-region: ap-south-1
 
       # Step 4: Log in to Amazon ECR Public
       - name: Log in to Amazon ECR Public
@@ -34,12 +34,12 @@ jobs:
       # Step 5: Build Docker image
       - name: Build Docker image
         run: |
-          docker buildx build --build-arg TARGETPLATFORM=linux/amd64 --tag {{ secrets.ECR_PUBLIC_REPOSITORY }}:latest .
+          docker build --tag ${{ secrets.ECR_PUBLIC_REPOSITORY }}:latest .
 
       # Step 6: Push Docker image to Amazon ECR Public
       - name: Push Docker image
         run: |
-          docker push {{ secrets.ECR_PUBLIC_REPOSITORY }}:latest
+          docker push ${{ secrets.ECR_PUBLIC_REPOSITORY }}:latest
 
       # Step 7: Deploy to ECS
       - name: Deploy to ECS
@@ -59,4 +59,4 @@ jobs:
       - name: Rollback deployment
         if: failure()
         run: |
-          aws ecs update-service --cluster my-ecs-cluster --service my-ecs-service --force-new-deployment
+          aws ecs update-service --cluster vecluster --service ve3service --force-new-deployment
