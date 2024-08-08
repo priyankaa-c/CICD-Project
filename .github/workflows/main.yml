@@ -48,13 +48,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS Secret Access Key
           aws-region: ap-south-1  # AWS region for ECS
 
+      - name: Task Definition for ECS
+        run: |
+          aws ecs register-task-definition \
+            --cli-input-json file://task-definition.json  # Register the ECS task definition using the JSON file
+
       - name: Deploying to ECS
         run: |
           aws ecs update-service \
             --cluster vecluster \
             --service ve3service \
             --force-new-deployment \
-            --region ap-south-1  # Deploy the new Docker image to ECS
+            --region ap-south-1
 
   test:
     runs-on: ubuntu-latest
@@ -63,7 +68,7 @@ jobs:
     steps:
       - name: Run integration tests
         run: |
-          curl -f http://IP || exit 1  # Running integration test by sending a request to your app
+          curl -f http://13.202.100.76 || exit 1  # Running integration test by sending a request to your app
 
       - name: Rollback on failure
         if: failure()
