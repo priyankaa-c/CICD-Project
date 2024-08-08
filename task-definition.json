@@ -29,6 +29,5 @@
   "networkMode": "awsvpc",
   "memory": "512",
   "cpu": "256",
-  "executionRoleArn": "arn:aws:iam::211125726100:role/AWSecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole"
+  "executionRoleArn": "arn:aws:iam::211125726100:role/AWSecsTaskExecutionRole"
 }
