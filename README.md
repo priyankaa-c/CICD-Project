@@ -2,15 +2,16 @@
 ## Task: Implement a CI/CD Pipeline with GitHub Actions for Automated Deployment and Rollback ##
 ### step1: Github Repository Set-up: ###
  
-~~~|---.github~~~
-~~~|           |---workflows~~~
-~~~|                      |---main.yml~~~
-~~~|---app.py~~~
-~~~|---Dockerfile~~~
-~~~|---nginx.conf~~~
-~~~|---requirements.txt~~~
-~~~|---task-definition.json~~~
-
+```
+|---.github
+|           |---workflows
+|                      |---main.yml
+|---app.py
+|---Dockerfile
+|---nginx.conf
+|---requirements.txt
+|---task-definition.json
+```
 •	/.github/workflows/main.yml – YAML file contains the job workflows
 •	/app.py – file contains basic web app python code (flask framework)
 •	/Dockerfile – file contains instructions to build and run Nginx server.
